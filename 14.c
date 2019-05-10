@@ -28,7 +28,10 @@ int main(){
     char *arr = malloc(n * m * sizeof(char));
     if(!arr) return 0;
     char *used = malloc(n * m * sizeof(char));
-    if(!used) return 0;
+    if(!used) {
+        free(arr);
+        return 0;
+    }
     int x,y;
     char buffer[m+1];
     for(int i = 0; i < n; i++){
@@ -42,6 +45,8 @@ int main(){
         }
     }
     dfs(x,y,arr,used,n,m,&way);
+    free(arr);
+    free(used);
     printf(way?"Yes":"No");
     return 0;
 }

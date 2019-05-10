@@ -16,6 +16,7 @@
 #define MULT_STR "*"
 #define DIV_STR "/"
 #define VAR_STR "x"
+#define NULL_STR ""
 
 typedef struct constant constant;
 typedef struct variable variable;
@@ -129,6 +130,7 @@ bool create_tree(stack *operation){
                 buff[size++] = c;
             }
         }
+        if(!strcmp(buff,NULL_STR)) break;
         new = malloc(sizeof(expression));
         // VAR (0)
         if(!strcmp(buff,VAR_STR)){
