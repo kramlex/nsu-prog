@@ -10,43 +10,38 @@
 
 #define POINT '.'
 
-bool lol = false;
-bool used[1000][1000];
-char arr[1000][1000];
-int n,m;
-int k = 0;
-
-void dfs(int x,int y){
-    if (x == n-1 || y == m-1 || x == 0 || y == 0)
-        lol = true;
+void dfs(int x, int y, char *arr, char *used, int n, int m , bool *way){
+    if (x == n-1 || y == m-1 || x == 0 || y == 0) *(way) = true;
     else{
-        used[x][y] = true;
-        k++;
-        if(arr[x+1][y] == POINT && !used[x+1][y] ) dfs(x+1,y);
-        if(arr[x-1][y] == POINT && !used[x-1][y] ) dfs(x-1,y);
-        if(arr[x][y+1] == POINT && !used[x][y+1] ) dfs(x,y+1);
-        if(arr[x][y-1] == POINT && !used[x][y-1] ) dfs(x,y-1);
+        used[x*n+y] = true;
+        if(arr[(x+1)*n+y] == POINT && !used[(x+1)*n+y] ) dfs(x+1,y, arr, used , n, m, way);
+        if(arr[(x-1)*n+y] == POINT && !used[(x-1)*n+y] ) dfs(x-1,y,arr, used , n, m, way);
+        if(arr[x*n+y+1] == POINT && !used[x*n+y+1] ) dfs(x,y+1, arr, used , n, m, way);
+        if(arr[x*n+y-1] == POINT && !used[x*n+y-1] ) dfs(x,y-1, arr, used , n, m, way);
     }
 }
 
 int main(){
+    bool way = false;
+    int n,m;
     scanf("%d %d", &n , &m);
-    char c;
+    char *arr = malloc(n * m * sizeof(char));
+    if(!arr) return 0;
+    char *used = malloc(n * m * sizeof(char));
+    if(!used) return 0;
     int x,y;
     char buffer[m+1];
     for(int i = 0; i < n; i++){
         scanf("%s",buffer);
         for(int j = 0; j < m; j++){
-            arr[i][j] = buffer[j];
-            if(arr[i][j] == 'x'){
-                x = i;
-                y = j;
+            arr[i*n+j] = buffer[j];
+            if(arr[i*n+j] == 'x'){
+                x = i; y = j;
             }
-            used[i][j] = false;
+            used[i*n+j] = false;
         }
     }
-    dfs(x,y);
-    printf(lol?"Yes":"No");
-    printf("% d", k);
+    dfs(x,y,arr,used,n,m,&way);
+    printf(way?"Yes":"No");
     return 0;
 }

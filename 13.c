@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <ctype.h>
 
 #define COS_STR "cos"
 #define SIN_STR "sin"
@@ -88,7 +89,7 @@ void free_tree(expression *a){
         if(!a->b.right_exp)
             free_tree(a->b.right_exp);
     }
-    if(a->type == 1)
+    if(a->type == 3)
         free_tree(a->u.exp);
     free(a);
 }
@@ -102,10 +103,32 @@ void free_stack(stack *a){
 }
 
 bool create_tree(stack *operation){
-    char buff[15];
     expression *new;
-    while(scanf("%s",buff)){
-        if(!strcmp(buff,".")) break;
+    while(true){
+        char buff[15];
+        char c;
+        int size = 0;
+        bool space = true;
+        bool end_read = false;
+        while(true){
+            c = getchar();
+            if(isspace(c)) {
+                if(c == '\n'){
+                    buff[size] = '\0';
+                    end_read = true;
+                    break;
+                }
+                if(space) continue;
+                else {
+                    buff[size] = '\0';
+                    break;
+                }
+            }
+            else{
+                space = false;
+                buff[size++] = c;
+            }
+        }
         new = malloc(sizeof(expression));
         // VAR (0)
         if(!strcmp(buff,VAR_STR)){
@@ -117,7 +140,7 @@ bool create_tree(stack *operation){
             }
         }
 
-        // UNARY(3)
+            // UNARY(3)
         else if(!strcmp(buff,COS_STR)){
             new->type = 3;
             node *pt = pop(operation);
@@ -152,7 +175,7 @@ bool create_tree(stack *operation){
             }
         }
 
-        // BINARY (2)
+            // BINARY (2)
         else if(!strcmp(buff,SUB_STR)){
             new->type = 2;
             node *pt1 = pop(operation);
@@ -210,7 +233,7 @@ bool create_tree(stack *operation){
             }
         }
 
-        // CONST (1)
+            // CONST (1)
         else{
             new->type = 1;
             new->c.val = atoi(buff);
@@ -220,6 +243,7 @@ bool create_tree(stack *operation){
             }
         }
 //        printf("\npush %s\n", buff);
+        if(end_read) break;
     }
     return true;
 }
@@ -256,7 +280,7 @@ void differ(expression *root){
             printf(" %s ",root->b.name);
             differ(root->b.right_exp);
         }
-        // /
+            // /
         else if(!strcmp(root->b.name,DIV_STR)){
             printf("(");
             differ(root->b.left_exp);
@@ -285,7 +309,7 @@ void differ(expression *root){
             infix_print(root->b.right_exp);
             printf("))");
         }
-        // *
+            // *
         else if(!strcmp(root->b.name,MULT_STR)){
             printf("(");
             differ(root->b.left_exp);
@@ -315,7 +339,7 @@ void differ(expression *root){
             printf(" %s ",MULT_STR);
             differ(root->u.exp);
         }
-        // cos
+            // cos
         else if(!strcmp(root->b.name,COS_STR)){
             printf("-1 * %s",SIN_STR);
             printf("(");
@@ -324,7 +348,7 @@ void differ(expression *root){
             printf(" %s ",MULT_STR);
             differ(root->u.exp);
         }
-        // sqrt
+            // sqrt
         else if(!strcmp(root->b.name,SQRT_STR)){
             printf("(");
             printf("1 / (2 * sqrt(");
