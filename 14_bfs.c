@@ -29,15 +29,18 @@ struct queue{
     node *rear;
 };
 
-void init(queue *q) {
+bool init(queue *q) {
     q->frnt = malloc(sizeof(node));
+    if(!q->frnt)
+        return false;
     q->frnt->next = NULL;
     q->rear = q->frnt;
     q->size = 0;
+    return true;
 }
 
-bool full(queue *q) {
-    return q->frnt == q->rear;
+bool is_empty(queue *q) {
+    return q->size == 0;
 }
 
 pair pop(queue *q){
@@ -90,17 +93,22 @@ void free_queue(queue *q){
 // -1 - MEMORY ERROR
 int bfs(int x , int y , int n, int m, char *arr , char* used){
     queue a;
-    init(&a);
     pair k = {x,y}; // tmp
-    push(&a,k);
+    if(!init(&a) || !push(&a,k)){
+        free_queue(&a);
+        return -1;
+    }
     used[x*n + y] = true;
     pair key;
-    while(!full(&a)) {
+    while(!is_empty(&a)) {
         key = pop(&a);
-//        printf("%d %d \n" , key.x , key.y);  DEBUG
+//        printf("%d %d %d \n", key.x , key.y, is_empty(&a));
         if (is_goal(key.x, key.y, n, m)) return 1;
-        if(!bfs_step(key.x + 1, key.y,n,m, used, arr, &a) || !bfs_step(key.x - 1, key.y,n,m, used, arr, &a)
-        || !bfs_step(key.x, key.y + 1,n,m, used, arr, &a) || !bfs_step(key.x, key.y - 1,n,m, used, arr, &a)){
+        if(!bfs_step(key.x + 1, key.y,n,m, used, arr, &a)
+        || !bfs_step(key.x - 1, key.y,n,m, used, arr, &a)
+        || !bfs_step(key.x, key.y + 1,n,m, used, arr, &a)
+        || !bfs_step(key.x, key.y - 1,n,m, used, arr, &a))
+        {
             free_queue(&a);
             return -1;
         }
@@ -138,7 +146,7 @@ int main(){
         printf("MEMORY ERROR");
         return 0;
     }
-    else printf(ans? "Yes" : "No");
+    else printf(ans ? "Yes" : "No");
     return 0;
 }
 

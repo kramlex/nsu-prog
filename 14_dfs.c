@@ -13,14 +13,17 @@
 
 
 void dfs(int x, int y, char *arr, char *used, int n, int m , bool *way){
-    if (x == n-1 || y == m-1 || x == 0 || y == 0) *(way) = true;
-    else{
-        used[x*n+y] = true;
-        if(arr[(x+1)*n+y] == POINT && !used[(x+1)*n+y] ) dfs(x+1,y, arr, used , n, m, way);
-        if(arr[(x-1)*n+y] == POINT && !used[(x-1)*n+y] ) dfs(x-1,y,arr, used , n, m, way);
-        if(arr[x*n+y+1] == POINT && !used[x*n+y+1] ) dfs(x,y+1, arr, used , n, m, way);
-        if(arr[x*n+y-1] == POINT && !used[x*n+y-1] ) dfs(x,y-1, arr, used , n, m, way);
+    if(!(*way)){
+        if (x == n-1 || y == m-1 || x == 0 || y == 0) *(way) = true;
+        else{
+            used[x*n+y] = true;
+            if(arr[(x+1)*n+y] == POINT && !used[(x+1)*n+y] ) dfs(x+1,y, arr, used , n, m, way);
+            if(arr[(x-1)*n+y] == POINT && !used[(x-1)*n+y] ) dfs(x-1,y,arr, used , n, m, way);
+            if(arr[x*n+y+1] == POINT && !used[x*n+y+1] ) dfs(x,y+1, arr, used , n, m, way);
+            if(arr[x*n+y-1] == POINT && !used[x*n+y-1] ) dfs(x,y-1, arr, used , n, m, way);
+        }
     }
+
 }
 
 int main(){
